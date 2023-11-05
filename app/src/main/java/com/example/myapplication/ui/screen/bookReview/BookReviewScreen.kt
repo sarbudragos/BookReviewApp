@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,7 +18,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,8 +32,43 @@ fun BookReviewScreen(
     state: BookReviewState,
     onEvent: (BookReviewEvent) -> Unit
 ) {
+
     Scaffold(
         topBar = {
+            val showDeleteConfirmation = remember{mutableStateOf(false)}
+
+            if(showDeleteConfirmation.value)
+            {
+                AlertDialog(
+                    title = {
+                        Text(text = "Delete?")
+                    },
+                    text = {
+                        Text(text = "Are you sure?")
+                    },
+                    onDismissRequest = {
+                        showDeleteConfirmation.value = false
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                onEvent(BookReviewEvent.DeleteBookReview)
+                            }
+                        ) {
+                            Text("Confirm")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                showDeleteConfirmation.value = false
+                            }
+                        ) {
+                            Text("Dismiss")
+                        }
+                    })
+            }
+
             CenterAlignedTopAppBar(
                 title = { /*TODO*/ },
                 navigationIcon = {
@@ -47,7 +86,8 @@ fun BookReviewScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            onEvent(BookReviewEvent.DeleteBookReview)
+                            showDeleteConfirmation.value = true
+
                         }
                     ) {
                         Icon(
@@ -59,6 +99,8 @@ fun BookReviewScreen(
             )
         }
     ) { padding ->
+
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -69,6 +111,8 @@ fun BookReviewScreen(
                 ),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+
+
             OutlinedTextField(
                 value = state.name,
                 onValueChange = {
