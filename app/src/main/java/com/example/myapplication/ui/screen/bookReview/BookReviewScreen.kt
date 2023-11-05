@@ -112,10 +112,37 @@ fun BookReviewScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
 
+            val showValidationError = remember{mutableStateOf(false)}
+
+            if(showValidationError.value)
+            {
+                AlertDialog(
+                    title = {
+                        Text(text = "Validation error?")
+                    },
+                    text = {
+                        Text(text = "A field is either empty or below 0")
+                    },
+                    onDismissRequest = {
+                        showValidationError.value = false
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                showValidationError.value = false
+                            }
+                        ) {
+                            Text("Confirm")
+                        }
+                    }
+                    )
+            }
+
 
             OutlinedTextField(
                 value = state.name,
                 onValueChange = {
+
                     onEvent(BookReviewEvent.NameChange(it))
                 },
                 placeholder = {
@@ -169,7 +196,15 @@ fun BookReviewScreen(
             ) {
                 Button(
                     onClick = {
-                        onEvent(BookReviewEvent.Save)
+                        if(state.name == "" || state.author == "" || state.publishingYear!! < 0 ||
+                            state.reviewScore!! < 0 || state.reviewScore > 10){
+                            showValidationError.value = true
+
+                        }
+                        else
+                        {
+                            onEvent(BookReviewEvent.Save)
+                        }
                     },
                     modifier = Modifier.fillMaxWidth(0.5f)
                 ) {

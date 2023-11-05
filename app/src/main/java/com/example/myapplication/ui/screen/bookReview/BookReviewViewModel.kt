@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BookReviewViewModel @Inject constructor(
     private val repository: BookReviewRepository,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BookReviewState())
@@ -57,6 +57,7 @@ class BookReviewViewModel @Inject constructor(
     fun onEvent(event: BookReviewEvent) {
         when (event) {
             is BookReviewEvent.NameChange -> {
+
                 _state.update {
                     it.copy(
                         name = event.value
